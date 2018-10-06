@@ -90,7 +90,13 @@ def exibirTabelaRIP(tabela):
 			registro["proximoNumeroRoteador"], registro["interface"]))
 	
 	print("######################################################")
-		
+
+def exibirInterfaces(interfaces):
+	print("\nEndereço das interfaces:")
+	for i in range(len(interfaces))	:
+		print("Interface {}: \"{}\"".format(i, interfaces[i]))
+	print("")	
+
 
 #############################################################################
 # Programa principal
@@ -106,8 +112,5 @@ if not enderecos and not tabelaRegistros:
 	exit("Não existe roteador: Digite um número entre 0 e 3\nNão foi possível construir tabela RIP")
 
 # Exibe as interfaces e a tabela atual
-print(enderecos)
-print("")
-print(tabelaRegistros)
-
-exibirTabelaRIP(NODE0_TABLE_RIP)
+exibirInterfaces(enderecos)	
+exibirTabelaRIP(tabelaRegistros)
