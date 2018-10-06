@@ -22,7 +22,7 @@ NODE3_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.5.100', '192.168.2.100', '192.168
 
 PORT = 10000
 
-# Define a tabela RIP inicial e cada Roteador
+# Define a tabela RIP inicial de cada Roteador
 NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"},
 					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
 					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
@@ -91,6 +91,11 @@ def configurarRoteador(numeroRoteador):
 # Configuração de envio/recebimento mensagens com socket
 #############################################################################
 
+# Envia mensagem em "Broadcast"
+def enviarBroadcast(interfaces, mensagem):
+	for interface in interfaces:
+		sender(interface, mensagem)
+
 # Recebe mensagens via socket UDP
 def receiver(interface):
 	server_address = (interface, PORT)
@@ -132,8 +137,8 @@ def exibirInterfaces(interfaces):
 		print("Interface {}: \"{}\"".format(i, interfaces[i]))
 	print("")	
 
-def exibirMenu(interface):
-	print("1 - Mudar distancia")
+def exibirMenu():
+	print("1 - Mudar pesos")
 
 
 #############################################################################
@@ -160,4 +165,5 @@ for interface in interfacesEntrada:
 
 while(True):
 	input()
+	exibirMenu()
 
