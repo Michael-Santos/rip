@@ -1,6 +1,8 @@
 import socket
 import json
 import sys
+import threading
+import socket
 
 #############################################################################
 # Configuração da arquitetura
@@ -12,7 +14,13 @@ NODE1_INTERFACES_ADD = [ '192.168.1.200', '192.168.5.100' ]
 NODE2_INTERFACES_ADD = [ '192.168.3.200', '192.168.4.100' ]
 NODE3_INTERFACES_ADD = [ '192.168.5.200', '192.168.2.200', '192.168.4.200' ]
 
-PORT = 1000
+# Define o endereço de cada interface vizinha de cada um dos roteadores
+NODE0_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.1.200', '192.168.2.200', '192.168.3.200' ]
+NODE1_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.1.100', '192.168.5.200' ]
+NODE2_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.3.100', '192.168.4.100' ]
+NODE3_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.5.100', '192.168.2.100', '192.168.4.100' ]
+
+PORT = 10000
 
 # Define a tabela RIP inicial e cada Roteador
 NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
@@ -34,7 +42,7 @@ def inicializarTabelaRIP(numeroRoteador):
 	return(tabelaInicial)
 
 # Configura os endereços de cada interface do roteador
-def configurarInterfaces(numeroRoteador):
+def configurarInterfacesEntrada(numeroRoteador):
 	switcher = {
 		0: NODE0_INTERFACES_ADD,
 		1: NODE1_INTERFACES_ADD,
@@ -42,20 +50,32 @@ def configurarInterfaces(numeroRoteador):
 		3: NODE3_INTERFACES_ADD
 	}
 
-	enderecos = switcher.get(numeroRoteador, [])
-	return(enderecos)
+	interfaces = switcher.get(numeroRoteador, [])
+	return(interfaces)
+
+def configurarInterfacesSaida(numeroRoteador):
+	switcher = {
+		0: NODE0_INTERFACES_ADD_NEIGHBORHOOD,
+		1: NODE1_INTERFACES_ADD_NEIGHBORHOOD,
+		2: NODE2_INTERFACES_ADD_NEIGHBORHOOD,
+		3: NODE3_INTERFACES_ADD_NEIGHBORHOOD
+	}
+
+	interfaces = switcher.get(numeroRoteador, [])
+	return(interfaces)
 
 # Configura o roteador
 def configurarRoteador(numeroRoteador):
-	enderecos = configurarInterfaces(numeroRoteador)
+	interfacesEntrada = configurarInterfacesEntrada(numeroRoteador)
+	interfacesSaida = configurarInterfacesSaida(numeroRoteador)
 	tabelaInicial = inicializarTabelaRIP(numeroRoteador)
-	return(enderecos, tabelaInicial)
+	return(interfacesEntrada, interfacesSaida, tabelaInicial)
 
 #############################################################################
 # Configuração dos sockets
 #############################################################################
 
-#def configuraSockets:
+#def configurarSockets:
 
 
 
@@ -63,15 +83,19 @@ def configurarRoteador(numeroRoteador):
 # Configuração de envio/recebimento mensagens com socket
 #############################################################################
 
-# Envia mensagens via socket UDP
-def receiver(interfaces):
-	socket = []
-
-	for i in interfaces:
-		socket[i] = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
 # Recebe mensagens via socket UDP
-#def sender():
+def receiver(interface):
+	server_address = (interface, PORT)
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock.bind(server_address)
+	data, address = sock.recvfrom(4096)
+
+	jsonMessage = json.loads(data.decode('utf-8'))
+	print(jsonMessage)
+
+# Envia mensagens via socket UDP
+#def sender(interface):
+
 
 
 #############################################################################
@@ -106,11 +130,16 @@ registrosAlterados = []
 
 # Recebe o número do roteador e configura-o
 numeroRoteador = int(input("Digite o número do nó: "))
-enderecos, tabelaRegistros = configurarRoteador(numeroRoteador)
+interfacesEntrada, interfacesSaida, tabelaRegistros = configurarRoteador(numeroRoteador)
 
-if not enderecos and not tabelaRegistros:
+if not interfacesEntrada and not interfacesSaida and not tabelaRegistros:
 	exit("Não existe roteador: Digite um número entre 0 e 3\nNão foi possível construir tabela RIP")
 
 # Exibe as interfaces e a tabela atual
-exibirInterfaces(enderecos)	
+exibirInterfaces(interfacesEntrada)	
 exibirTabelaRIP(tabelaRegistros)
+
+# Cria uma thread para receber mensagens em cada interface
+for interface in interfacesEntrada:
+	t = threading.Thread(target=receiver, args=(interface,))
+	t.start()
