@@ -72,14 +72,6 @@ def configurarRoteador(numeroRoteador):
 	return(interfacesEntrada, interfacesSaida, tabelaInicial)
 
 #############################################################################
-# Configuração dos sockets
-#############################################################################
-
-#def configurarSockets:
-
-
-
-#############################################################################
 # Configuração de envio/recebimento mensagens com socket
 #############################################################################
 
@@ -94,9 +86,11 @@ def receiver(interface):
 	print(jsonMessage)
 
 # Envia mensagens via socket UDP
-#def sender(interface):
-
-
+def sender(interface, mensagem):
+	server_address = (interface, PORT)
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	data = json.dumps(mensagem)
+    sent = sock.sendto(data.encode('utf-8'), server_address)
 
 #############################################################################
 # Exibir informações
