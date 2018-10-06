@@ -2,6 +2,9 @@ import socket
 import json
 import sys
 
+#############################################################################
+# Configuração da arquitetura
+#############################################################################
 
 # Define o endereço de cada interface de cada um dos roteadores
 NODE0_INTERFACES_ADD = [ '192.168.1.100', '192.168.2.100', '192.168.3.100' ]
@@ -12,10 +15,11 @@ NODE3_INTERFACES_ADD = [ '192.168.5.200', '192.168.2.200', '192.168.4.200' ]
 PORT = 1000
 
 # Define a tabela RIP inicial e cada Roteador
-NODE0_TABLE_RIP = ["numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None]
-NODE1_TABLE_RIP = ["numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None]
-NODE2_TABLE_RIP = ["numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None]
-NODE3_TABLE_RIP = ["numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None]
+NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
+NODE1_TABLE_RIP = [{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
+NODE2_TABLE_RIP = [{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
+NODE3_TABLE_RIP = [{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
+
 
 # Inicializa a tabela de RIP do Roteador
 def inicializarTabelaRIP(numeroRoteador):
@@ -38,19 +42,30 @@ def configurarInterfaces(numeroRoteador):
 		3: NODE3_INTERFACES_ADD
 	}
 
-	enderecos = switcher.get(numero, [])
+	enderecos = switcher.get(numeroRoteador, [])
 	return(enderecos)
 
 # Configura o roteador
 def configurarRoteador(numeroRoteador):
-	enderecos = configurarTabelaRIP(numeroRoteador)
+	enderecos = configurarInterfaces(numeroRoteador)
 	tabelaInicial = inicializarTabelaRIP(numeroRoteador)
 	return(enderecos, tabelaInicial)
+
+
+#############################################################################
+# Configuração da arquitetura
+#############################################################################
+
 
 #def receiver():
 
 
 #def serder():
+
+
+#############################################################################
+# Programa principal
+#############################################################################
 
 registrosAlterados = []
 
@@ -61,4 +76,7 @@ enderecos, tabelaRegistros = configurarRoteador(numeroRoteador)
 if not enderecos and not tabelaRegistros:
 	exit("Não existe roteador: Digite um número entre 0 e 3\nNão foi possível construir tabela RIP")
 
-#Cria o socket UDP
+# Exibe as interfaces e a tabela atual
+print(enderecos)
+print("")
+print(tabelaRegistros)
