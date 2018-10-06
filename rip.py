@@ -90,7 +90,7 @@ def sender(interface, mensagem):
 	server_address = (interface, PORT)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	data = json.dumps(mensagem)
-    sent = sock.sendto(data.encode('utf-8'), server_address)
+	sent = sock.sendto(data.encode('utf-8'), server_address)
 
 #############################################################################
 # Exibir informações
