@@ -23,10 +23,26 @@ NODE3_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.5.100', '192.168.2.100', '192.168
 PORT = 10000
 
 # Define a tabela RIP inicial e cada Roteador
-NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
-NODE1_TABLE_RIP = [{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
-NODE2_TABLE_RIP = [{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
-NODE3_TABLE_RIP = [{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
+NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"}
+]
+NODE1_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"}
+]
+NODE2_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"}
+]
+NODE3_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
+					{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}					
+]
 
 
 # Inicializa a tabela de RIP do Roteador
@@ -103,8 +119,9 @@ def exibirTabelaRIP(tabela):
 	print("######################################################")
 
 	for registro in tabela:
-		print('#      {}     | {} |       {}       |     {}     #'.format(
-			registro["numeroRoteador"], str(registro["distancia"]).zfill(9),
+		distancia = "    -    " if registro["distancia"] == "-" else str(registro["distancia"]).zfill(9)
+		print('#      {}     | {} |       {}       |     {}     #'.format(			
+			registro["numeroRoteador"], distancia,
 			registro["proximoNumeroRoteador"], registro["interface"]))
 	
 	print("######################################################")
@@ -114,6 +131,9 @@ def exibirInterfaces(interfaces):
 	for i in range(len(interfaces))	:
 		print("Interface {}: \"{}\"".format(i, interfaces[i]))
 	print("")	
+
+def exibirMenu(interface):
+	print("1 - Mudar distancia")
 
 
 #############################################################################
@@ -137,3 +157,7 @@ exibirTabelaRIP(tabelaRegistros)
 for interface in interfacesEntrada:
 	t = threading.Thread(target=receiver, args=(interface,))
 	t.start()
+
+while(True):
+	input()
+
