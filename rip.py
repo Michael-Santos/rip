@@ -15,10 +15,10 @@ NODE3_INTERFACES_ADD = [ '192.168.5.200', '192.168.2.200', '192.168.4.200' ]
 PORT = 1000
 
 # Define a tabela RIP inicial e cada Roteador
-NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
-NODE1_TABLE_RIP = [{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
-NODE2_TABLE_RIP = [{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
-NODE3_TABLE_RIP = [{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": None, "interface": None}]
+NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
+NODE1_TABLE_RIP = [{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
+NODE2_TABLE_RIP = [{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
+NODE3_TABLE_RIP = [{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}]
 
 
 # Inicializa a tabela de RIP do Roteador
@@ -51,17 +51,46 @@ def configurarRoteador(numeroRoteador):
 	tabelaInicial = inicializarTabelaRIP(numeroRoteador)
 	return(enderecos, tabelaInicial)
 
+#############################################################################
+# Configuração dos sockets
+#############################################################################
+
+#def configuraSockets:
+
+
 
 #############################################################################
-# Configuração da arquitetura
+# Configuração de envio/recebimento mensagens com socket
 #############################################################################
 
+# Envia mensagens via socket UDP
+def receiver(interfaces):
+	socket = []
 
-#def receiver():
+	for i in interfaces:
+		socket[i] = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# Recebe mensagens via socket UDP
+#def sender():
 
 
-#def serder():
+#############################################################################
+# Exibir informações
+#############################################################################
 
+# Exibe registros
+def exibirTabelaRIP(tabela):
+	print("######################################################")
+	print("# Nº Rotedor | Distancia | Prox Roteador | Interface #")
+	print("######################################################")
+
+	for registro in tabela:
+		print('#      {}     | {} |       {}       |     {}     #'.format(
+			registro["numeroRoteador"], str(registro["distancia"]).zfill(9),
+			registro["proximoNumeroRoteador"], registro["interface"]))
+	
+	print("######################################################")
+		
 
 #############################################################################
 # Programa principal
@@ -80,3 +109,5 @@ if not enderecos and not tabelaRegistros:
 print(enderecos)
 print("")
 print(tabelaRegistros)
+
+exibirTabelaRIP(NODE0_TABLE_RIP)
