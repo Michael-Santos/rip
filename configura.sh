@@ -1,12 +1,8 @@
 # Cria as interfaces necessárias
 
-if [ $# -ne '2' ]; then
-	echo "Uso: \$configura < interface > < criar | destruir >"
+if [ $# -ne '1' ]; then
+	echo "Uso: \$configura < interface >"
 	exit
-fi
-
-if [ $2 != "destruir" ] && [ $2 != "criar" ]; then
-	echo "Uso: \$configura < interface > < criar | destruir >"
 fi
 
 # Endereco de cada uma das interfaces
@@ -26,12 +22,5 @@ ENDERECOS[9]='192.168.4.200'
 
 for i in 0 1 2 3 4 5 6 7 8 9;
 do
-
-	if [ $2 == 'criar' ]; then
-		# Cria interfaces
-		sudo ifconfig $1:$i ${ENDERECOS[$i]}
-	else
-		# Exclui interfaces
-		sudo ifconfig $1:$i down
-	fi
+	sudo ifconfig $1:$i ${ENDERECOS[$i]}
 done;
