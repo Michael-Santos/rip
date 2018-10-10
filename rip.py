@@ -152,8 +152,12 @@ def exibirInterfaces(interfaces):
 	print("")	
 
 def exibirMenu():
-	print("1 - Mudar pesos")
-	print("2 - Iniciar RIP")
+	print("#################################")
+	print("# O que deseja fazer?           #")
+	print("#################################")
+	print("# 1 - Mudar pesos               #")
+	print("# 2 - Iniciar RIP               #")
+	print("#################################")
 
 
 #############################################################################
@@ -168,6 +172,7 @@ if not interfacesEntrada and not interfacesSaida and not tabelaRegistros:
 	exit("Não existe roteador: Digite um número entre 0 e 3\nNão foi possível construir tabela RIP")
 
 print("")
+
 # Inicializar distância para vizinho
 inicializarDistancias(idRoteador, tabelaRegistros)
 
