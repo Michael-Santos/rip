@@ -32,23 +32,23 @@ PORT = 10000
 
 # Define a tabela RIP inicial de cada Roteador
 NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-"},
-					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": 1},
-					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": 2},
-					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": 3}
+					{"numeroRoteador": 1, "distancia": 99999 , "proximoNumeroRoteador": 1},
+					{"numeroRoteador": 2, "distancia": 99999 , "proximoNumeroRoteador": 2},
+					{"numeroRoteador": 3, "distancia": 99999 , "proximoNumeroRoteador": 3}
 ]
-NODE1_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": 0},
+NODE1_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 99999 , "proximoNumeroRoteador": 0},
 					{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": "-"},
-					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-"},
-					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": 3}
+					{"numeroRoteador": 2, "distancia": 99999 , "proximoNumeroRoteador": "-"},
+					{"numeroRoteador": 3, "distancia": 99999 , "proximoNumeroRoteador": 3}
 ]
-NODE2_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": 0},
-					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-"},
+NODE2_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 99999 , "proximoNumeroRoteador": 0},
+					{"numeroRoteador": 1, "distancia": 99999 , "proximoNumeroRoteador": "-"},
 					{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": "-"},
-					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": 3}
+					{"numeroRoteador": 3, "distancia": 99999 , "proximoNumeroRoteador": 3}
 ]
-NODE3_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": 0},
-					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": 1},
-					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": 2},
+NODE3_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 99999 , "proximoNumeroRoteador": 0},
+					{"numeroRoteador": 1, "distancia": 99999 , "proximoNumeroRoteador": 1},
+					{"numeroRoteador": 2, "distancia": 99999 , "proximoNumeroRoteador": 2},
 					{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": "-"}					
 ]
 
@@ -126,7 +126,7 @@ def enviarBroadcast(interfaces, mensagem):
 		sender(interface, mensagem)
 
 # Recebe mensagens via socket UDP
-def receiver(idRoteador, interface, tabelaRegistros):
+def receiver(idRoteador, interfaces, tabelaRegistros, idVizinhos):
 	server_address = (interface, PORT)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(server_address)
@@ -134,7 +134,8 @@ def receiver(idRoteador, interface, tabelaRegistros):
 	#time.sleep(random.randint(1, 10))
 
 	jsonMessage = json.loads(data.decode('utf-8'))
-	print(jsonMessage)
+	#print(jsonMessage)
+	atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, jsonMessage)
 
 # Envia mensagens via socket UDP
 def sender(interface, mensagem):
@@ -146,6 +147,36 @@ def sender(interface, mensagem):
 #############################################################################
 # Execução do RIP
 #############################################################################
+
+# Atualiza a tabela RIP com a mensagem recebida do roteador vizinho
+def atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, mensagem):
+	# Obtém identificador do roteador remetente
+	idRemetente = mensagem["idRemetente"]
+	
+	# Atualiza a distância até o roteador remetente
+	distanciaRemetenteAteAtual = mensagem["tabelaRegistros"][idRoteador]["distancia"]
+	distanciaAtualAteRemetente = tabelaRegistros[idRemetente]["distancia"]
+	
+	ocorreuAtualizacao = False
+
+	if distanciaAtualAteRemetente != distanciaRemetenteAteAtual:
+		ocorreuAtualizacao = True
+		tabelaRegistros[idRemetente]["distancia"] = distanciaRemetenteAteAtual
+
+	for i in range(4):
+		if i == idRoteador:
+			continue
+			
+		distanciaRecebida = mensagem["tabelaRegistros"][i]["distancia"]
+		distanciaAtual = tabelaRegistros[i]["distancia"]
+
+		if (distanciaRecebida+distanciaAtualAteRemetente < distanciaAtual):
+			tabelaRegistros[i]["distancia"] = distanciaRecebida+distanciaAtualAteRemetente
+			tabelaRegistros[i]["proximoNumeroRoteador"] = idRemetente
+			ocorreuAtualizacao = True
+
+	print(tabelaRegistros)
+
 
 # Realiza o envio da tabela atual para os roteadores vizinhos
 def enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida):
@@ -164,7 +195,7 @@ def exibirTabelaRIP(tabela):
 	print("##########################################")
 
 	for registro in tabela:
-		distancia = "    -    " if registro["distancia"] == "-" else str(registro["distancia"])
+		distancia = "    -    " if registro["distancia"] == 99999 else str(registro["distancia"])
 		print('#      {}     | {} |       {}       #'.format(			
 			registro["numeroRoteador"], str(distancia).center(9),
 			registro["proximoNumeroRoteador"]))
@@ -209,7 +240,7 @@ exibirTabelaRIP(tabelaRegistros)
 
 # Cria uma thread para receber mensagens em cada interface
 for interface in interfacesEntrada:
-	t = threading.Thread(target=receiver, args=(idRoteador, interface, tabelaRegistros))
+	t = threading.Thread(target=receiver, args=(idRoteador, interface, tabelaRegistros, idVizinhos))
 	t.start()
 
 while(True):
