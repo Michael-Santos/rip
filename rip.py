@@ -175,8 +175,12 @@ def atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, mens
 			tabelaRegistros[i]["proximoNumeroRoteador"] = idRemetente
 			ocorreuAtualizacao = True
 
-	print(tabelaRegistros)
 
+	print("Recebida mensagem RIP do roteador {}".format(idRemetente))
+	exibirTabelaRIP(tabelaRegistros)
+	
+	#if ocorreuAtualizacao:
+	#	enviarTabelaRIPVizinhos(idRoteador, interfaces, tabelaRegistros)
 
 # Realiza o envio da tabela atual para os roteadores vizinhos
 def enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida):
