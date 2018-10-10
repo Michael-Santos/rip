@@ -20,6 +20,12 @@ NODE1_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.1.100', '192.168.5.200' ]
 NODE2_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.3.100', '192.168.4.100' ]
 NODE3_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.5.100', '192.168.2.100', '192.168.4.100' ]
 
+# Armazena o id dos roteadores vizinhos
+NODE0_ID_NEIGHBORHOOD = [ 1, 2, 3 ]
+NODE1_ID_NEIGHBORHOOD = [ 0, 3 ]
+NODE2_ID_NEIGHBORHOOD = [ 0, 3 ]
+NODE3_ID_NEIGHBORHOOD = [ 0, 1, 2 ]
+
 PORT = 10000
 
 # Define a tabela RIP inicial de cada Roteador
@@ -161,6 +167,16 @@ def exibirMenu():
 
 
 #############################################################################
+# Funções durante execução
+#############################################################################
+
+# Altera os pesos dos enlaces configurados atualmente
+def alterarPesos(idRoteador, tabelaRegistros):
+	for registro in Rotedor
+
+
+
+#############################################################################
 # Programa principal
 #############################################################################
 
@@ -188,7 +204,13 @@ for interface in interfacesEntrada:
 while(True):
 	input()
 	exibirMenu()
+	print("")
+	opcao = input("Opção: ")
 
+	if int(opcao) == 1:
+		#alterarPesos()
+	else:
+		#executarRIP:
 
 
 #############################################################################
