@@ -124,7 +124,7 @@ def enviarBroadcast(interfaces, mensagem):
 		sender(interface, mensagem)
 
 # Recebe mensagens via socket UDP
-def receiver(interface):
+def receiver(idRoteador, interface, tabelaRegistros):
 	server_address = (interface, PORT)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(server_address)
@@ -139,6 +139,16 @@ def sender(interface, mensagem):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	data = json.dumps(mensagem)
 	sent = sock.sendto(data.encode('utf-8'), server_address)
+
+#############################################################################
+# Execução do RIP
+#############################################################################
+
+# Realiza o envio da tabela atual para os roteadores vizinhos
+def enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida):
+	mensagemRIP = {"idRemetente": idRoteador, "tabelaRegistros": tabelaRegistros}
+	enviarBroadcast(interfacesSaida, mensagemRIP)
+	#print(json.dumps(jsonMessage, indent=4))
 
 #############################################################################
 # Exibir informações
@@ -196,7 +206,7 @@ exibirTabelaRIP(tabelaRegistros)
 
 # Cria uma thread para receber mensagens em cada interface
 for interface in interfacesEntrada:
-	t = threading.Thread(target=receiver, args=(interface,))
+	t = threading.Thread(target=receiver, args=(idRoteador, interface, tabelaRegistros))
 	t.start()
 
 while(True):
@@ -208,8 +218,8 @@ while(True):
 	if int(opcao) == 1:
 		alterarDistancias(idRoteador, tabelaRegistros, idVizinhos)
 		exibirTabelaRIP(tabelaRegistros)
-	#else:
-		#executarRIP:
+	else:
+		enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida)
 #############################################################################
 # Formato da mensagem será um Json com seguinte campos:
 # idRemetende
