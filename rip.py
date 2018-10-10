@@ -94,10 +94,12 @@ def inicializarRoteador(idRoteador):
 
 def inicializarDistancias(idRoteador, tabelaRegistros):
 	for registro in tabelaRegistros:
-		if registro["numeroRoteador"] == idRoteador:
+		if registro["proximoNumeroRoteador"] == "-":
 			continue
 
-		#print("Digite um peso para a interface {}:".format(registro[interface]) )
+		peso = input("Digite um peso para enlace ligando ao roteador de id {}:".format(registro["proximoNumeroRoteador"]) )
+
+		registro["distancia"] = int(peso)
 
 #############################################################################
 # Configuração de envio/recebimento mensagens com socket
@@ -165,6 +167,7 @@ interfacesEntrada, interfacesSaida, tabelaRegistros = inicializarRoteador(idRote
 if not interfacesEntrada and not interfacesSaida and not tabelaRegistros:
 	exit("Não existe roteador: Digite um número entre 0 e 3\nNão foi possível construir tabela RIP")
 
+print("")
 # Inicializar distância para vizinho
 inicializarDistancias(idRoteador, tabelaRegistros)
 
