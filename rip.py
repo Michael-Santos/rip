@@ -14,7 +14,7 @@ NODE1_INTERFACES_ADD = [ '192.168.1.200', '192.168.5.100' ]
 NODE2_INTERFACES_ADD = [ '192.168.3.200', '192.168.4.100' ]
 NODE3_INTERFACES_ADD = [ '192.168.5.200', '192.168.2.200', '192.168.4.200' ]
 
-# Define o endereço de cada interface vizinha de cada um dos roteadores
+# Define o endereço de cada interface vizinha de cada um dos roteadores (Cada posição no vetor é o índice da interface de saída)
 NODE0_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.1.200', '192.168.2.200', '192.168.3.200' ]
 NODE1_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.1.100', '192.168.5.200' ]
 NODE2_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.3.100', '192.168.4.100' ]
@@ -23,30 +23,34 @@ NODE3_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.5.100', '192.168.2.100', '192.168
 PORT = 10000
 
 # Define a tabela RIP inicial de cada Roteador
-NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"}
+NODE0_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 0 , "proximoNumeroRoteador": "-"},
+					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": 1},
+					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": 2},
+					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": 3}
 ]
-NODE1_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"}
+NODE1_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": 0},
+					{"numeroRoteador": 1, "distancia": 0 , "proximoNumeroRoteador": "-"},
+					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-"},
+					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": 3}
 ]
-NODE2_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"}
+NODE2_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": 0},
+					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-"},
+					{"numeroRoteador": 2, "distancia": 0 , "proximoNumeroRoteador": "-"},
+					{"numeroRoteador": 3, "distancia": "-" , "proximoNumeroRoteador": 3}
 ]
-NODE3_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": "-", "interface": "-"},
-					{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": "-", "interface": "-"}					
+NODE3_TABLE_RIP = [{"numeroRoteador": 0, "distancia": "-" , "proximoNumeroRoteador": 0},
+					{"numeroRoteador": 1, "distancia": "-" , "proximoNumeroRoteador": 1},
+					{"numeroRoteador": 2, "distancia": "-" , "proximoNumeroRoteador": 2},
+					{"numeroRoteador": 3, "distancia": 0 , "proximoNumeroRoteador": "-"}					
 ]
 
+
+#############################################################################
+# Inicialização do roteador
+#############################################################################
 
 # Inicializa a tabela de RIP do Roteador
-def inicializarTabelaRIP(numeroRoteador):
+def inicializarTabelaRIP(idRoteador):
 	switcher = {
 		0: NODE0_TABLE_RIP,
 		1: NODE1_TABLE_RIP,
@@ -54,11 +58,11 @@ def inicializarTabelaRIP(numeroRoteador):
 		3: NODE3_TABLE_RIP
 	}
 
-	tabelaInicial = switcher.get(numeroRoteador, [])
+	tabelaInicial = switcher.get(idRoteador, [])
 	return(tabelaInicial)
 
 # Configura os endereços de cada interface do roteador
-def configurarInterfacesEntrada(numeroRoteador):
+def configurarInterfacesEntrada(idRoteador):
 	switcher = {
 		0: NODE0_INTERFACES_ADD,
 		1: NODE1_INTERFACES_ADD,
@@ -66,10 +70,10 @@ def configurarInterfacesEntrada(numeroRoteador):
 		3: NODE3_INTERFACES_ADD
 	}
 
-	interfaces = switcher.get(numeroRoteador, [])
+	interfaces = switcher.get(idRoteador, [])
 	return(interfaces)
 
-def configurarInterfacesSaida(numeroRoteador):
+def configurarInterfacesSaida(idRoteador):
 	switcher = {
 		0: NODE0_INTERFACES_ADD_NEIGHBORHOOD,
 		1: NODE1_INTERFACES_ADD_NEIGHBORHOOD,
@@ -77,15 +81,23 @@ def configurarInterfacesSaida(numeroRoteador):
 		3: NODE3_INTERFACES_ADD_NEIGHBORHOOD
 	}
 
-	interfaces = switcher.get(numeroRoteador, [])
+	interfaces = switcher.get(idRoteador, [])
 	return(interfaces)
 
 # Configura o roteador
-def configurarRoteador(numeroRoteador):
-	interfacesEntrada = configurarInterfacesEntrada(numeroRoteador)
-	interfacesSaida = configurarInterfacesSaida(numeroRoteador)
-	tabelaInicial = inicializarTabelaRIP(numeroRoteador)
+def inicializarRoteador(idRoteador):
+	interfacesEntrada = configurarInterfacesEntrada(idRoteador)
+	interfacesSaida = configurarInterfacesSaida(idRoteador)
+	tabelaInicial = inicializarTabelaRIP(idRoteador)
 	return(interfacesEntrada, interfacesSaida, tabelaInicial)
+
+
+def inicializarDistancias(idRoteador, tabelaRegistros):
+	for registro in tabelaRegistros:
+		if registro["numeroRoteador"] == idRoteador:
+			continue
+
+		#print("Digite um peso para a interface {}:".format(registro[interface]) )
 
 #############################################################################
 # Configuração de envio/recebimento mensagens com socket
@@ -119,17 +131,17 @@ def sender(interface, mensagem):
 
 # Exibe registros
 def exibirTabelaRIP(tabela):
-	print("######################################################")
-	print("# Nº Rotedor | Distancia | Prox Roteador | Interface #")
-	print("######################################################")
+	print("##########################################")
+	print("# Nº Rotedor | Distancia | Prox Roteador #")
+	print("##########################################")
 
 	for registro in tabela:
 		distancia = "    -    " if registro["distancia"] == "-" else str(registro["distancia"]).zfill(9)
-		print('#      {}     | {} |       {}       |     {}     #'.format(			
+		print('#      {}     | {} |       {}       #'.format(			
 			registro["numeroRoteador"], distancia,
-			registro["proximoNumeroRoteador"], registro["interface"]))
+			registro["proximoNumeroRoteador"]))
 	
-	print("######################################################")
+	print("##########################################")
 
 def exibirInterfaces(interfaces):
 	print("\nEndereço das interfaces:")
@@ -139,20 +151,22 @@ def exibirInterfaces(interfaces):
 
 def exibirMenu():
 	print("1 - Mudar pesos")
+	print("2 - Iniciar RIP")
 
 
 #############################################################################
 # Programa principal
 #############################################################################
 
-registrosAlterados = []
-
 # Recebe o número do roteador e configura-o
-numeroRoteador = int(input("Digite o número do nó: "))
-interfacesEntrada, interfacesSaida, tabelaRegistros = configurarRoteador(numeroRoteador)
+idRoteador = int(input("Digite o número do nó: "))
+interfacesEntrada, interfacesSaida, tabelaRegistros = inicializarRoteador(idRoteador)
 
 if not interfacesEntrada and not interfacesSaida and not tabelaRegistros:
 	exit("Não existe roteador: Digite um número entre 0 e 3\nNão foi possível construir tabela RIP")
+
+# Inicializar distância para vizinho
+inicializarDistancias(idRoteador, tabelaRegistros)
 
 # Exibe as interfaces e a tabela atual
 exibirInterfaces(interfacesEntrada)	
@@ -167,3 +181,10 @@ while(True):
 	input()
 	exibirMenu()
 
+
+
+#############################################################################
+# Formato da mensagem será um Json com seguinte campos:
+# idRemetende
+# tabelaRemetente
+#############################################################################
