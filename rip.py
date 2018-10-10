@@ -98,14 +98,21 @@ def inicializarRoteador(idRoteador):
 	return(interfacesEntrada, interfacesSaida, tabelaInicial)
 
 
-def inicializarDistancias(idRoteador, tabelaRegistros):
-	for registro in tabelaRegistros:
-		if registro["proximoNumeroRoteador"] == "-":
-			continue
+def alterarDistancias(idRoteador, tabelaRegistros, idVizinhos):
+	for idVizinho in idVizinhos:
+		peso = input("Digite um peso para enlace ligando ao roteador de id {}:".format(idVizinho))
+		tabelaRegistros[idVizinho]["distancia"] = int(peso)
 
-		peso = input("Digite um peso para enlace ligando ao roteador de id {}:".format(registro["proximoNumeroRoteador"]) )
+def obterVizinhos(idRoteador):
+	switcher = {
+		0: NODE0_ID_NEIGHBORHOOD,
+		1: NODE1_ID_NEIGHBORHOOD,
+		2: NODE2_ID_NEIGHBORHOOD,
+		3: NODE3_ID_NEIGHBORHOOD
+	}
 
-		registro["distancia"] = int(peso)
+	idVizinhos = switcher.get(idRoteador, [])
+	return(idVizinhos)
 
 #############################################################################
 # Configuração de envio/recebimento mensagens com socket
@@ -167,16 +174,6 @@ def exibirMenu():
 
 
 #############################################################################
-# Funções durante execução
-#############################################################################
-
-# Altera os pesos dos enlaces configurados atualmente
-def alterarPesos(idRoteador, tabelaRegistros):
-	for registro in Rotedor
-
-
-
-#############################################################################
 # Programa principal
 #############################################################################
 
@@ -190,7 +187,8 @@ if not interfacesEntrada and not interfacesSaida and not tabelaRegistros:
 print("")
 
 # Inicializar distância para vizinho
-inicializarDistancias(idRoteador, tabelaRegistros)
+idVizinhos = obterVizinhos(idRoteador)
+alterarDistancias(idRoteador, tabelaRegistros, idVizinhos)
 
 # Exibe as interfaces e a tabela atual
 exibirInterfaces(interfacesEntrada)	
@@ -208,13 +206,13 @@ while(True):
 	opcao = input("Opção: ")
 
 	if int(opcao) == 1:
-		#alterarPesos()
-	else:
+		alterarDistancias(idRoteador, tabelaRegistros, idVizinhos)
+	#else:
 		#executarRIP:
-
-
 #############################################################################
 # Formato da mensagem será um Json com seguinte campos:
 # idRemetende
 # tabelaRemetente
 #############################################################################
+
+
