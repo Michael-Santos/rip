@@ -151,9 +151,9 @@ def exibirTabelaRIP(tabela):
 	print("##########################################")
 
 	for registro in tabela:
-		distancia = "    -    " if registro["distancia"] == "-" else str(registro["distancia"]).zfill(9)
+		distancia = "    -    " if registro["distancia"] == "-" else str(registro["distancia"])
 		print('#      {}     | {} |       {}       #'.format(			
-			registro["numeroRoteador"], distancia,
+			registro["numeroRoteador"], str(distancia).center(9),
 			registro["proximoNumeroRoteador"]))
 	
 	print("##########################################")
@@ -207,6 +207,7 @@ while(True):
 
 	if int(opcao) == 1:
 		alterarDistancias(idRoteador, tabelaRegistros, idVizinhos)
+		exibirTabelaRIP(tabelaRegistros)
 	#else:
 		#executarRIP:
 #############################################################################
