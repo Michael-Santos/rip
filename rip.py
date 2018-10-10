@@ -130,12 +130,14 @@ def receiver(idRoteador, interfaces, tabelaRegistros, idVizinhos):
 	server_address = (interface, PORT)
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(server_address)
-	data, address = sock.recvfrom(4096)
-	#time.sleep(random.randint(1, 10))
 
-	jsonMessage = json.loads(data.decode('utf-8'))
-	#print(jsonMessage)
-	atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, jsonMessage)
+	while(True):
+		data, address = sock.recvfrom(4096)
+		#time.sleep(random.randint(1, 10))
+
+		jsonMessage = json.loads(data.decode('utf-8'))
+		print(jsonMessage)
+		atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, jsonMessage)
 
 # Envia mensagens via socket UDP
 def sender(interface, mensagem):
@@ -179,8 +181,9 @@ def atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, mens
 	print("Recebida mensagem RIP do roteador {}".format(idRemetente))
 	exibirTabelaRIP(tabelaRegistros)
 	
-	#if ocorreuAtualizacao:
+	if ocorreuAtualizacao:
 	#	enviarTabelaRIPVizinhos(idRoteador, interfaces, tabelaRegistros)
+		print(ocorreuAtualizacao)
 
 # Realiza o envio da tabela atual para os roteadores vizinhos
 def enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida):
