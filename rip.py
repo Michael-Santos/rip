@@ -3,6 +3,8 @@ import json
 import sys
 import threading
 import socket
+import random
+import time
 
 #############################################################################
 # Configuração da arquitetura
@@ -17,7 +19,7 @@ NODE3_INTERFACES_ADD = [ '192.168.5.200', '192.168.2.200', '192.168.4.200' ]
 # Define o endereço de cada interface vizinha de cada um dos roteadores (Cada posição no vetor é o índice da interface de saída)
 NODE0_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.1.200', '192.168.2.200', '192.168.3.200' ]
 NODE1_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.1.100', '192.168.5.200' ]
-NODE2_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.3.100', '192.168.4.100' ]
+NODE2_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.3.100', '192.168.4.200' ]
 NODE3_INTERFACES_ADD_NEIGHBORHOOD = [ '192.168.5.100', '192.168.2.100', '192.168.4.100' ]
 
 # Armazena o id dos roteadores vizinhos
@@ -129,6 +131,7 @@ def receiver(idRoteador, interface, tabelaRegistros):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	sock.bind(server_address)
 	data, address = sock.recvfrom(4096)
+	#time.sleep(random.randint(1, 10))
 
 	jsonMessage = json.loads(data.decode('utf-8'))
 	print(jsonMessage)
