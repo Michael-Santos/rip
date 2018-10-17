@@ -133,10 +133,10 @@ def receiver(idRoteador, interfaces, tabelaRegistros, idVizinhos):
 
 	while(True):
 		data, address = sock.recvfrom(4096)
-		#time.sleep(random.randint(1, 10))
+		#time.sleep(20)
 
 		jsonMessage = json.loads(data.decode('utf-8'))
-		print(jsonMessage)
+		#print(json.dumps(jsonMessage, indent=4))
 		atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, jsonMessage)
 
 # Envia mensagens via socket UDP
@@ -151,7 +151,7 @@ def sender(interface, mensagem):
 #############################################################################
 
 # Atualiza a tabela RIP com a mensagem recebida do roteador vizinho
-def atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, mensagem):
+def atualizarTabelaRIP(idRoteador, interface, tabelaRegistros, idVizinhos, mensagem):
 	# Obtém identificador do roteador remetente
 	idRemetente = mensagem["idRemetente"]
 	
@@ -174,22 +174,24 @@ def atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, mens
 
 		if (distanciaRecebida+distanciaAtualAteRemetente < distanciaAtual):
 			tabelaRegistros[i]["distancia"] = distanciaRecebida+distanciaAtualAteRemetente
-			tabelaRegistros[i]["proximoNumeroRoteador"] = idRemetente
+			tabelaRegistros[i]["proximoNumeroRoteador"] = tabelaRegistros[idRemetente]["proximoNumeroRoteador"]
 			ocorreuAtualizacao = True
 
 
 	print("Recebida mensagem RIP do roteador {}".format(idRemetente))
 	exibirTabelaRIP(tabelaRegistros)
-	
+
+	interfaceVizinhos = configurarInterfacesSaida(idRoteador)
+
 	if ocorreuAtualizacao:
-	#	enviarTabelaRIPVizinhos(idRoteador, interfaces, tabelaRegistros)
+		enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfaceVizinhos)
 		print(ocorreuAtualizacao)
 
 # Realiza o envio da tabela atual para os roteadores vizinhos
 def enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida):
 	mensagemRIP = {"idRemetente": idRoteador, "tabelaRegistros": tabelaRegistros}
 	enviarBroadcast(interfacesSaida, mensagemRIP)
-	#print(json.dumps(jsonMessage, indent=4))
+	#print(type(json.dumps(mensagemRIP, indent=4)))
 
 #############################################################################
 # Exibir informações
