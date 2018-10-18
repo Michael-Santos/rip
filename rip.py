@@ -57,6 +57,16 @@ NODE3_TABLE_RIP = [{"numeroRoteador": 0, "distancia": 99999 , "proximoNumeroRote
 # Inicialização do roteador
 #############################################################################
 
+# Resetar tabela RIP
+def resetRIP(idRoteador, tabelaRegistros):
+	tabelaReset = inicializarTabelaRIP(idRoteador)
+
+	for i in range(len(tabelaRegistros)):
+		if i == idRoteador:
+			continue
+		else:
+			tabelaRegistros[i]["proximoNumeroRoteador"] = i
+
 # Inicializa a tabela de RIP do Roteador
 def inicializarTabelaRIP(idRoteador):
 	switcher = {
@@ -133,10 +143,9 @@ def receiver(idRoteador, interfaces, tabelaRegistros, idVizinhos):
 
 	while(True):
 		data, address = sock.recvfrom(4096)
-		#time.sleep(20)
+		time.sleep(2)
 
 		jsonMessage = json.loads(data.decode('utf-8'))
-		#print(json.dumps(jsonMessage, indent=4))
 		atualizarTabelaRIP(idRoteador, interfaces, tabelaRegistros, idVizinhos, jsonMessage)
 
 # Envia mensagens via socket UDP
@@ -185,13 +194,11 @@ def atualizarTabelaRIP(idRoteador, interface, tabelaRegistros, idVizinhos, mensa
 
 	if ocorreuAtualizacao:
 		enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfaceVizinhos)
-		print(ocorreuAtualizacao)
 
 # Realiza o envio da tabela atual para os roteadores vizinhos
 def enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida):
 	mensagemRIP = {"idRemetente": idRoteador, "tabelaRegistros": tabelaRegistros}
 	enviarBroadcast(interfacesSaida, mensagemRIP)
-	#print(type(json.dumps(mensagemRIP, indent=4)))
 
 #############################################################################
 # Exibir informações
@@ -259,6 +266,7 @@ while(True):
 	opcao = input("Opção: ")
 
 	if int(opcao) == 1:
+		resetRIP(idRoteador, tabelaRegistros)
 		alterarDistancias(idRoteador, tabelaRegistros, idVizinhos)
 		exibirTabelaRIP(tabelaRegistros)
 	else:
