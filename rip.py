@@ -228,8 +228,7 @@ def exibirMenu():
 	print("#################################")
 	print("# O que deseja fazer?           #")
 	print("#################################")
-	print("# 1 - Mudar pesos               #")
-	print("# 2 - Iniciar RIP               #")
+	print("# 1 - Iniciar RIP               #")
 	print("#################################")
 
 
@@ -266,11 +265,9 @@ while(True):
 	opcao = input("Opção: ")
 
 	if int(opcao) == 1:
-		resetRIP(idRoteador, tabelaRegistros)
-		alterarDistancias(idRoteador, tabelaRegistros, idVizinhos)
-		exibirTabelaRIP(tabelaRegistros)
-	else:
 		enviarTabelaRIPVizinhos(idRoteador, tabelaRegistros, interfacesSaida)
+	else:
+		print("Opção inválida\n\n")
 #############################################################################
 # Formato da mensagem será um Json com seguinte campos:
 # idRemetende
