@@ -8,6 +8,6 @@ Verificar qual é a interface utilizada atualmente pelo host por meio do comando
 
 Ex: "$./configura wlp3s0"
 
-Obs: Será solicitado a senha se root
+Obs: Será solicitado a senha de root
 
 
